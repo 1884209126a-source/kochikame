@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>烏龍派出所：集數大考驗</title>
+<style>
+:root{--bg:#FFF3B8;--card:#fff;--ink:#1E293B;--mute:#64748b;--y:#FFD000;--o:#FF6B00;--ok:#047857;--okbg:#d1fae5;--bad:#b91c1c;--badbg:#fee2e2;--warn:#92400e;--warnbg:#fef3c7;--line:#1E293B;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f172a;--card:#1e293b;--ink:#f1f5f9;--mute:#94a3b8;--ok:#6ee7b7;--okbg:#064e3b;--bad:#fca5a5;--badbg:#7f1d1d;--warn:#fcd34d;--warnbg:#78350f;--line:#FFD000;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f172a;--card:#1e293b;--ink:#f1f5f9;--mute:#94a3b8;--ok:#6ee7b7;--okbg:#064e3b;--bad:#fca5a5;--badbg:#7f1d1d;--warn:#fcd34d;--warnbg:#78350f;--line:#FFD000;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.5}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+.box{background:var(--card);border:3px solid var(--line);border-radius:16px;box-shadow:5px 5px 0 var(--line);padding:16px;margin-bottom:16px}
+h1{font-size:1.6rem;margin:4px 0;line-height:1.2}h2{font-size:1.05rem;margin:0 0 2px}
+.mute{color:var(--mute);font-size:.85rem;margin:0 0 10px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.between{justify-content:space-between}
+.btn{font:inherit;font-weight:800;border:3px solid var(--line);border-radius:12px;padding:10px 16px;background:var(--y);color:#1E293B;box-shadow:3px 3px 0 var(--line);cursor:pointer}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+.btn.alt{background:var(--card);color:var(--ink)}.btn.o{background:var(--o);color:#fff}.btn.sm{padding:4px 10px;font-size:.8rem}.btn.sel{background:var(--y);color:#1E293B}
+input{font:inherit;width:100%;padding:12px;border:3px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font-size:1.1rem}
+:focus-visible{outline:3px solid var(--o);outline-offset:2px}
+.hid{display:none!important}
+.prompt{font-size:1.5rem;font-weight:900;text-align:center;margin:12px 0;word-break:break-word}
+.pill{background:var(--o);color:#fff;border-radius:99px;padding:2px 10px;font-weight:800;font-size:.85rem}
+.track{height:10px;border:2px solid var(--line);border-radius:99px;margin-top:10px;overflow:hidden}#bar{height:100%;width:0;background:var(--o);transition:width .3s}
+#fb{margin-top:12px;padding:10px;border:2px solid;border-radius:12px;text-align:center;font-weight:800}
+#fb.ok{color:var(--ok);background:var(--okbg)}#fb.bad{color:var(--bad);background:var(--badbg)}#fb.warn{color:var(--warn);background:var(--warnbg)}
+.shake{animation:sh .4s}@keyframes sh{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+@media (prefers-reduced-motion:reduce){.shake{animation:none}}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.stats div{border:2px solid var(--line);border-radius:10px;padding:8px;text-align:center}.stats b{display:block;font-size:1.3rem}
+.lbrow{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed var(--mute);font-weight:700;font-size:.9rem}
+.wr{border-left:4px solid var(--bad);padding:4px 10px;margin:8px 0;font-size:.9rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="menu" class="wrap">
+  <div class="box">
+    <div class="row between"><span style="font-size:2rem">🚓</span><button class="btn alt sm" id="snd" type="button">🔊 音效：開啟</button></div>
+    <h1>烏龍派出所：集數大考驗</h1>
+    <p class="mute">龜有公園前派出所．全 341 集，挑戰你的阿兩指數！</p>
+    <label for="nm" class="mute">玩家大名</label>
+    <input id="nm" maxlength="12" placeholder="輸入你的大名" autocomplete="off">
+    <p id="nmerr" class="mute hid" role="alert" style="color:var(--bad);font-weight:700;margin:6px 0 0"></p>
+    <div class="row" id="names" style="margin-top:8px"></div>
+  </div>
+  <div class="box">
+    <h2>📖 給標題 ➔ 打集數</h2>
+    <p class="mute">看到動畫標題，輸入集數編號（1～341）</p>
+    <div class="row"><button class="btn" data-m="forward" data-n="10">10 題</button><button class="btn" data-m="forward" data-n="25">25 題</button><button class="btn" data-m="forward" data-n="50">50 題</button></div>
+  </div>
+  <div class="box">
+    <h2>✍️ 給集數 ➔ 打標題</h2>
+    <p class="mute">給定集數，打出完整標題。標點與全半形不計較，雙集合併的標題打出其中一半即可</p>
+    <div class="row"><button class="btn o" data-m="reverse" data-n="10">10 題特訓</button><button class="btn o" data-m="reverse" data-n="25">25 題地獄</button></div>
+  </div>
+  <div class="box">
+    <h2>🏆 龜有署排行榜 Top 5</h2>
+    <p class="mute">依模式與題數分開記錄，以 PR 值排序（存在這個瀏覽器）</p>
+    <div class="row" id="tabs" style="margin-bottom:8px"></div>
+    <div id="lb"></div>
+  </div>
+</div>
+
+<div id="game" class="wrap hid">
+  <div class="box">
+    <div class="row between"><b>題目 <span id="qn"></span> / <span id="qt"></span></b><span id="combo" class="pill hid">🔥 <span id="cc"></span> 連擊！</span><b>得分 <span id="score">0</span></b></div>
+    <div class="track"><div id="bar"></div></div>
+  </div>
+  <div class="box" id="card">
+    <p id="hint" class="mute" style="text-align:center"></p>
+    <p id="prompt" class="prompt"></p>
+    <form id="form" autocomplete="off">
+      <input id="inp" aria-label="你的答案">
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="go" type="submit">送出答案</button>
+        <button class="btn alt" id="skip" type="button">🏳️ 放棄本題</button>
+        <button class="btn o hid" id="next" type="button">下一題 ➔</button>
+      </div>
+    </form>
+    <div id="fb" class="hid"></div>
+  </div>
+</div>
+
+<div id="result" class="wrap hid">
+  <div class="box" style="text-align:center">
+    <h2>評價結算</h2>
+    <h1 id="rank"></h1><p class="mute" id="rdesc"></p>
+    <div class="stats">
+      <div><b id="fs"></b>最終得分</div><div><b id="fa"></b>正確率</div>
+      <div><b id="fc"></b>答對題數</div><div><b id="ft"></b>耗費時間</div>
+    </div>
+    <div class="pill" style="display:inline-block;font-size:1.2rem;padding:6px 18px">全國粉絲 <span id="fp"></span></div>
+  </div>
+  <div class="box"><h2>📝 錯題檢討 <span class="mute" id="wc"></span></h2><div id="wl"></div></div>
+  <div class="row"><button class="btn" id="again" type="button">🔄 再試一次</button><button class="btn alt" id="home" type="button">🏠 返回主選單</button></div>
+</div>
+
+<script>
+const T="兩津警員出現！？|從天而降的新進警員|空中攤販！生意興隆|中樂透彩的暴發戶|在刨冰上盡情滑雪|麗子發飆，瘋狂追追追|醒來吧！冬眠警察|打開吧！勝鬨橋！|加油啊！場外相撲比賽|脫線‧暴走‧大爆走！拼命的交通安全講習！|訪問中川的家|江戶人的激烈戰役|阿兩和麗子形影不離！？|迷路小象的假日|本田為愛奔走|所長家的神秘寶物|蟑螂大競賽|重現京都之旅|蕎麥麵屋的重振計畫！|兩津式的考試必勝法|獎金爭奪戰1|兩津最受歡迎宣言|新春的戰鬥紙牌|全日本最沒責任感的父子|在家關禁閉才不可怕！|賺收視率！|超級有錢人！白鳥麗次|阿兩大逃亡|男人之間的溝通橋樑－檜木澡堂|三月三日娃娃節|忍者V.S.印地安兩津|阿兩現在修行中|啊～好想有自己的房子|高科技小學生V.S.兩津|熱淚盈眶的所長|奪回秘密照片|不要命的吃到飽|白鳥麗次再度登場|熱戀中的兩津和麻里愛|爆笑的翻墮羅拳法|初戀情人是兩津！？|鱷魚的演藝生涯心酸史|呼風喚雨的棒球賽|兩津勘吉的閃電結婚|阿兩的實習生訓練記|阿兩的人形娃娃熱賣中|緊張刺激！急流中的遊船|阿兩男扮女裝大作戰|到加拿大練翻墮羅拳|美味的復仇食譜|利用幽靈賺大錢|激動派的超級辣媽|淺草初戀物語|超激烈的遊戲玩家－左近寺|造成大混亂的下流照片|神勇的爺爺|歡迎女性來住微笑宿舍！|所長的私生子疑案|出動松茸守衛隊|翻墮羅拳，千鈞一髮！|再見了，大原所長！？|向前衝吧！失戀的機車騎士|警署內的報紙大戰|獎金爭奪戰2|出差症候群|追蹤！名犬兩津|驚人的無厘頭新年聚會|對決！釣馬子|老爺爺和炸彈綁匪|本田的最後一個戀情|會令人上癮的美少女人形|燃燒吧！對露營的熱情|烏龍教授登場|絕對放心！兩津觀光|妖怪煙囪消失的日子|恐怖的置物櫃|欲望之真人抓娃娃機|激烈的社長─中川的父親|超烏龍的新發明|為種花而奮戰的阿兩|波爾波的同居時代|飛吧！警車上司|停不下來的攤販列車！|華麗的變身！月光刑警|未爆彈送貨到府|兩津死了！什麼？|貼緊！危險的兩人|擊沉！忍者老爺爺|恐怖的交通安全指導教官|鴿子咕咕刑警誕生！|恐怖！我的長髮怪朋友|大家來打棒球|這位就是我喜歡的人|從外太空掉下來的禮物|令人稱羨的兩人合照|被詛咒的梅子壺|中川是下町人嗎？|沒有牙齒就不能說的故事 / 阿兩要去月球了|我才是主角！星逃田|愛的貼身保鑣|窮途末路的最邊陲署|淺草的電影院樂園|烏龜的報恩|變身！所長的新車|獎金爭奪戰3|翻墮羅替身拳|兩津變小了！|淺草物語|哥哥的身份|親戚的身份|環遊世界48小時|麻里愛，愛的鐵拳！|逆襲！報應老頭|衝啊！麗子大追蹤|人世間嚴禁火燭|秘藥 兩津GPX|本田一家--1|在乎，也是種戀愛|多采多姿的生活方式 / 禍從臉出|菜鳥刑警--兩津|不要叫我爸爸！|左近寺 全新的出發|遙遠的放學後......|離奧運開幕還早得很？|戀愛的沖選島|飛吧！航空警察隊|感動！寺井的初體驗|兩津成為漫畫家！|激烈的踢罐子戰爭|諾斯特拉 兩津的大預言|家庭錄影帶之王|龜有的寧靜之夜|決戰！大破高爾夫球場|查理小林的秘密|荒唐深海SOS|工作吧！！松吉|在夜空中綻放的禮物|兩津體力有限公司|愛笑的惠比壽|撲克牌大戰|機械警察出動|史特拉第大追縱|宇宙人的逆襲|獎金爭奪戰4|時間啊！停止吧！ / 極樂啊！你在那啊！|遙遠的寺井家|靠鈣質撐過去！|肉體派魔術師|小町成為明星|實錄錄影帶攝影師|米和飯團的旅行|地獄般的寄宿生活|大哥大恐慌|溫泉旅行|不忍池的回憶|決戰大自然高爾夫|中川的平民生活苦鬥記|重新創造一次人生 / 聲音模仿家|人生中最倒楣的一天|飛越海洋的愛情|利用動畫卡通賺‧大‧錢！|友情的翅膀|高科技社長一家人|忍辱負重的工作|出現了！少女漫畫刑事！|災難的發生總是在大意時|終極戰警兩津|兩津的身體檢查|光輝的球場|下町交番日記(小地方派出所的日記)|劍道一直線！|勘吉郎的夏天|激烈衝突慈善義賣會|冬眠警官要回來了！|秘境！度井仲縣！|馬戲團交響曲|送報少年勘吉的故事|大衝突！兩津V.S.烏鴉！|圭一、麗子的夫妻漫才|阿兩開計程車|快跑！穩贏金太郎！|兩津成為藝術家|本田一家2--伊步的寶物|誤會一場|兩津加入選舉|獎金爭奪戰5|身體交換記|寺井，固執的追查|這裡是銀座署歌舞伎町派出所！|醒來吧！老實人兩津|大江戶搜查網|教你如何飼養寵物吧|回來了！交通安全之鬼|無軌電力公車的故事|悲慘的生日|聖橋的白線飄流|給親愛的大哥|人情義理的搖藍曲|快幫我把塗鴉擦掉啊~~~~~！|兩津城改造計劃|竊取收視率的男人|兩津的禁酒令|超級編輯|兩津成為有錢人|庶民區警察|超級幼稚園兒童--檸檬！|忍者學校開學了！|爸爸是孩子王！|憤怒的胸像~~|麗子，夏天的回憶......|在十二樓見|一億元爭奪戰|廟會太鼓|再見了，兩津......|決定！排行榜王！|魔法水壺|天才小學生的初戀(對檸檬一見鍾情)|超級老督察最完美的一天|兩津的臉|小心強迫推銷！|我是女演員--龜有兩子！|史上最慘之逃脫事件|獎金爭奪戰6|露餡了！小偷株式會社|飛向天空吧！聖誕節|檸檬的父親參觀日|飛吧！魔法飛毯|整人假情報的兩津鍋|警察便利店|今晚現場直播！？|龍蝦！螃蟹！魷魚！巨大生化生物來襲！ / 房客的顏色|熊寶寶大作戰|慘慘慘！悲劇重演的生日！|冒險家勘吉|打嗝止不住~~~~！|善良的小偷|兩津和檸檬的京都旅行|愛情大沉沒！！|街頭足球賽2002|遇見鑰匙狂|中川尋父三千里|兩津，最長的一天|極密任務！建造五重塔|本田大震撼！伊步要結婚了？！|高朋滿座！葛飾摔角大賽！|寺井跑吧！為了兒子拿到紀念章！|開發警用機器人004號 失敗太郎登場！|隱形刑警出現了！|檸檬當姊姊了|一週內吃下300個西瓜的男人|小兩津是小妖精嗎！？|泳裝照大進擊|派出所有好溫泉！|火冒三丈的機器警察|兩津的(下町)平民之旅|桃太灰姑娘？ /傳真我的一切！|利用療傷系賺大錢！|難纏的御所河原大爺|騙人的兩津和被騙的兩津|決戰 節省能源屋|兩津的狗兒生活|下町澡堂的壁畫|兩津撿到寶！秘密整人實況|獎金爭奪戰7|天上掉下來的......10億元！|飛吧！肩揹式直昇機！|兩津變大了！|大和魂保存會！？|兩津20面相|奪回彩券大作戰|ANGEL 7女警隊V.S.狂野好漢隊！|檸檬的育嬰奮鬥記|是男人就要有野心！|衰運連連的三月三日女兒節！|兩津和兩津！？|這裡是雪國派出所|這裡是那裡？電極臭老頭！|大原所長迷上電動玩具|檸檬不喜歡吃的東西|3年B班，兩津老師！|課長！兩津勘吉！？|兩津和小町修成正果！？|命運的分歧點|臨別的贈禮|身體交換記2--兩津變麗子，麗子變兩津！？|飛吧！飛行船隊|這裡是烏龍廣播電台！|熱海章魚之旅|到底在那裡啊！龜有公園前臨時派出所|兩津熱愛宣言！？|淺草少年之阿飛正傳|向祖先問好|克服酷暑大作戰|檸檬化身成女忍者|老師是天花亂墜吹牛大王|我是誰！？|鯉魚大騷動|派出所的往事|東方快車竊盜案|衝吧！代跑運動會|只有兩人留守的派出所|拼啦！車站前的攤販大戰|獎金爭奪戰8|伸縮自如的橡膠兩津|兩津流漫畫補習班|我就是不想做嘛！怎樣？ / 正義使者，兩津？|奈緒子，意外的一天|中川家的繼承風波|兩津 V.S. 白鳥麗次 打工大暴走！|正直者，兩津！？|搞笑制裁者|把平頭推廣到全世界吧！|尋回腳踏車大作戰|陰盛陽衰的派出所|歡迎來到龜有商店街！|超神田壽司 真工夫對決|賞櫻真辛苦|兩津當電影導演！？|狂奔！奧之細道|所長，請安心養病......|麗子和王子的龜有假期|這才是男人的採草莓之旅|歡迎鴕鳥的來到！|慘烈的戰鬥將棋|鐵腕兩津|尋找日暮三千里|爸爸是露營行家|無人島高爾夫球|再度登場！本田一家Final|檸檬鬧罷工|變形！Before←→After|小頑童兩津|廟會的回憶|大家來跳舞|發明王兩津|開懷大笑......抱歉啦！|花之子兩津|加油！熊警察|愛戰士‧兩津勘吉|征服鮪魚的警察|FINAL 「珍重再見！兩津」大作戰".split("|");
+const EP=T.map((t,i)=>({id:i+1,title:t}));
+const $=id=>document.getElementById(id),tg=(id,on)=>$(id).classList.toggle("hid",!on);
+const norm=s=>s.normalize("NFKC").replace(/[\s\p{P}\p{S}]/gu,"").toLowerCase();
+const match=(a,t)=>{a=norm(a);return a!==""&&(a===norm(t)||t.split("/").some(p=>norm(p)===a))};
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+let mode,N,Q,i,score,combo,ok,wrong,spent=0,qs=0,answered,sound=true,name="兩津勘吉",ac,lbKey="forward-10";
+
+function beep(t){if(!sound)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume();
+const o=ac.createOscillator(),g=ac.createGain(),n=ac.currentTime;o.connect(g);g.connect(ac.destination);
+const P={ok:["triangle",[[523,0],[880,.12]],.25],bad:["sawtooth",[[220,0],[130,.1]],.3],win:["sine",[[440,0],[554,.1],[659,.2],[880,.3]],.5]}[t];
+o.type=P[0];P[1].forEach(([f,d])=>o.frequency.setValueAtTime(f,n+d));g.gain.setValueAtTime(.2,n);g.gain.exponentialRampToValueAtTime(.01,n+P[2]);o.start(n);o.stop(n+P[2])}catch(x){}}
+$("snd").onclick=()=>{sound=!sound;$("snd").textContent=sound?"🔊 音效：開啟":"🔇 音效：關閉"};
+
+/* PR：先由答對率決定區間，再用平均秒數決定區間內的位置；連擊分數不再影響 PR */
+function calcPR(score,acc,sec,n,m){
+  if(n===0||acc===0)return 1;
+  const r=m==="reverse",par=r?20:8,avg=sec/n;
+  /* [答對率下限, 答對率上限, PR 下限, PR 上限] */
+  const B=acc<=10?[0,10,1,29]:acc<=70?[10,70,30,80]:acc<96?[70,96,81,95]:[96,100,96,99];
+  const pa=(acc-B[0])/(B[1]-B[0]);
+  /* 一般秒數係數：平均在基準內不扣分，越慢越低 */
+  const t=avg<=par?1:Math.max(0,1-(avg-par)/(par*3));
+  let pr=Math.round(B[2]+(B[3]-B[2])*(.7*pa+.3*t));
+  if(pr>=95){
+    /* 95 以上：平均用時從基準秒數(上限 94)線性縮短到 99 分門檻(數字 1.8 秒、標題 5.4 秒) */
+    const fast=r?5.4:1.8,f=Math.max(0,Math.min(1,(par-avg)/(par-fast)));
+    pr=Math.min(pr,94+Math.floor(5*f));
+  }
+  return Math.max(1,Math.min(99,pr));
+}
+
+/* 排行榜：依模式＋題數分開，PR → 分數 → 時間 */
+try{["kochikame_lb_v2","kochikame_leaderboard"].forEach(k=>localStorage.removeItem(k))}catch(e){}
+const LK="kochikame_lb_v3",CFG=[["forward",10],["forward",25],["forward",50],["reverse",10],["reverse",25]];
+const lbLoad=()=>{try{return JSON.parse(localStorage.getItem(LK))||{}}catch(e){return{}}};
+function lbSave(key,en){try{const d=lbLoad();d[key]=(d[key]||[]).concat(en).sort((a,b)=>b.pr-a.pr||b.score-a.score||a.time-b.time).slice(0,5);localStorage.setItem(LK,JSON.stringify(d))}catch(e){}}
+function renderLB(){
+  const tabs=$("tabs");tabs.textContent="";
+  CFG.forEach(([m,n])=>{const k=m+"-"+n,b=document.createElement("button");b.type="button";b.className="btn sm "+(k===lbKey?"sel":"alt");b.textContent=(m==="forward"?"📖 ":"✍️ ")+n+" 題";b.onclick=()=>{lbKey=k;renderLB()};tabs.appendChild(b)});
+  const box=$("lb"),l=lbLoad()[lbKey]||[];box.textContent="";
+  if(!l.length){const p=document.createElement("p");p.className="mute";p.textContent="還沒有紀錄，完成一局就會上榜。";box.appendChild(p);return}
+  l.forEach((e,k)=>{const d=document.createElement("div");d.className="lbrow";
+    const a=document.createElement("span");a.textContent="#"+(k+1)+" "+e.name;
+    const b=document.createElement("span");b.textContent="PR "+e.pr+"．"+e.score+" 分．"+e.time+" 秒";
+    d.append(a,b);box.appendChild(d)});
+}
+
+/* 大名不可重複：已建立的大名只能從清單點選，不能重新輸入建立 */
+const NK="kochikame_names",MK="kochikame_me";
+const nkey=s=>s.normalize("NFKC").replace(/\s+/g,"").toLowerCase();
+const nList=()=>{try{return JSON.parse(localStorage.getItem(NK))||[]}catch(e){return[]}};
+const meGet=()=>{try{return localStorage.getItem(MK)||""}catch(e){return""}};
+const nSave=(l,me)=>{try{localStorage.setItem(NK,JSON.stringify(l));localStorage.setItem(MK,me)}catch(e){}};
+function renderNames(){
+  const box=$("names"),l=nList(),me=nkey(meGet());box.textContent="";
+  if(!l.length)return;
+  const p=document.createElement("span");p.className="mute";p.style.margin="0";p.textContent="已建立的大名：";box.appendChild(p);
+  l.forEach(n=>{const b=document.createElement("button");b.type="button";b.className="btn sm "+(nkey(n)===me?"sel":"alt");b.textContent=n;
+    b.onclick=()=>{nSave(l,n);$("nm").value=n;tg("nmerr",false);renderNames()};box.appendChild(b)});
+}
+function claim(){
+  const v=$("nm").value.trim().replace(/\s+/g," "),e=$("nmerr");
+  const fail=m=>{e.textContent=m;tg("nmerr",true);$("nm").focus();return false};
+  if(!v)return fail("請先輸入大名，或點選下方已建立的大名。");
+  const l=nList(),k=nkey(v),ex=l.find(n=>nkey(n)===k);
+  if(ex&&nkey(meGet())!==k)return fail("這個大名已經有人用了，請換一個，或點選下方已建立的大名。");
+  if(!ex)l.push(v);
+  nSave(l,ex||v);name=ex||v;tg("nmerr",false);renderNames();return true;
+}
+/* 數字模式：只能輸入 1～341 */
+function clampNum(e){
+  if(mode!=="forward"||(e&&e.isComposing))return;
+  const x=$("inp");let v=x.value.normalize("NFKC").replace(/\D/g,"").replace(/^0+/,"");
+  if(v&&+v>341)v=v.slice(0,-1);
+  x.value=v;
+}
+$("inp").addEventListener("input",clampNum);$("inp").addEventListener("compositionend",clampNum);
+$("nm").addEventListener("input",()=>tg("nmerr",false));
+
+function show(id){["menu","game","result"].forEach(s=>tg(s,s===id))}
+function start(m,n){
+  if(!claim())return;
+  mode=m;N=n;Q=shuffle(EP).slice(0,n);i=0;score=combo=ok=0;wrong=[];spent=0;lbKey=m+"-"+n;
+  $("score").textContent=0;tg("combo",false);
+  $("inp").type="text";$("inp").inputMode=m==="forward"?"numeric":"text";$("inp").maxLength=m==="forward"?3:100;
+  $("qt").textContent=n;show("game");load();
+}
+function load(){
+  const q=Q[i];answered=false;qs=Date.now();
+  $("qn").textContent=i+1;$("bar").style.width=(i/N*100)+"%";tg("fb",false);
+  const f=mode==="forward";
+  $("hint").textContent=f?"這是第幾集？（1～341）":"請輸入這一集的完整標題";
+  $("prompt").textContent=f?"「"+q.title+"」":"第 "+q.id+" 集";
+  const x=$("inp");x.value="";x.disabled=false;setTimeout(()=>x.focus(),50);
+  tg("go",true);tg("skip",true);tg("next",false);
+}
+function fb(kind,msg){const b=$("fb");b.className=kind;b.textContent=msg}
+function judge(good,given){
+  const q=Q[i],f=mode==="forward",idx=i,correct=f?"第 "+q.id+" 集":q.title;
+  answered=true;spent+=Date.now()-qs;$("inp").disabled=true;tg("go",false);tg("skip",false);
+  if(good){
+    beep("ok");combo++;ok++;
+    const p=(f?100:150)+(combo-1)*(f?20:30);score+=p;$("score").textContent=score;
+    tg("combo",combo>1);$("cc").textContent=combo;
+    fb("ok","🎉 答對了！+"+p+" 分");
+    setTimeout(()=>{if(i===idx&&answered)next()},1000);
+    return;
+  }
+  beep("bad");combo=0;tg("combo",false);
+  wrong.push({q:f?q.title:"第 "+q.id+" 集",a:correct,g:given});
+  if(given==="放棄作答"){fb("warn","🏳️ 放棄！正確答案：「"+correct+"」")}
+  else{fb("bad","❌ 答錯了！正確答案：「"+correct+"」");const c=$("card");c.classList.add("shake");setTimeout(()=>c.classList.remove("shake"),400)}
+  tg("next",true);$("next").focus();
+}
+$("form").onsubmit=e=>{
+  e.preventDefault();if(answered)return next();
+  const q=Q[i],raw=$("inp").value;
+  if(mode==="forward"){const v=parseInt(raw,10);if(isNaN(v))return;judge(v===q.id,"第 "+v+" 集")}
+  else{if(!raw.trim())return;judge(match(raw,q.title),raw)}
+};
+$("skip").onclick=()=>judge(false,"放棄作答");
+$("next").onclick=()=>next();
+function next(){i++;i>=N?end():load()}
+
+function end(){
+  beep("win");
+  const secF=spent/1000,sec=Math.round(secF),acc=Math.round(ok/N*100),pr=calcPR(score,acc,secF,N,mode);
+  let r=["寺井洋一級","平淡也是一種幸福！多看幾集動畫再來挑戰吧！"];
+  if(acc===100)r=["神級．龜有傳奇大師","全數答對，大原所長也要甘拜下風！"];
+  else if(acc>=80)r=["中川＆麗子精英級","對烏龍派出所瞭如指掌，是署裡不可或缺的人才！"];
+  else if(acc>=50)r=["本田速人級","表現中規中矩，只要不騎上機車一切都安穩！"];
+  else if(acc>=30)r=["兩津勘吉級","靠直覺與強韌的生命力硬撐過來了！"];
+  $("rank").textContent=r[0];$("rdesc").textContent=r[1];
+  $("fs").textContent=score;$("fa").textContent=acc+"%";$("fc").textContent=ok+"/"+N;$("ft").textContent=sec+" 秒";$("fp").textContent="PR "+pr;
+  $("wc").textContent="（共錯 "+wrong.length+" 題）";
+  const wl=$("wl");wl.textContent="";
+  if(!wrong.length){const p=document.createElement("p");p.textContent="沒有錯題，完美通關！✨";wl.appendChild(p)}
+  wrong.forEach(w=>{const d=document.createElement("div");d.className="wr";
+    const a=document.createElement("b");a.textContent=w.q;
+    const b=document.createElement("div");b.className="mute";b.style.margin="2px 0 0";b.textContent="正確：「"+w.a+"」　你的回答："+w.g;
+    d.append(a,b);wl.appendChild(d)});
+  lbSave(mode+"-"+N,{name,score,pr,time:sec,acc,secF});
+  show("result");
+}
+$("again").onclick=()=>start(mode,N);
+$("home").onclick=()=>{renderLB();show("menu")};
+document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>start(b.dataset.m,+b.dataset.n));
+$("nm").value=meGet();renderNames();
+renderLB();
+</script>
+</body>
+</html>
